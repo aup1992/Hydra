@@ -26,6 +26,7 @@ jobs:
         run: dotnet build HydraMenu.sln -c Release --no-restore
 
       - name: Collect build outputs
+        shell: bash
         run: |
           mkdir -p artifact
           if [ -f src/bin/Release/net6.0/HydraMenu.dll ]; then cp src/bin/Release/net6.0/HydraMenu.dll artifact/; fi
