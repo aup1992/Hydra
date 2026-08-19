@@ -1,0 +1,40 @@
+name: Build and upload DLL
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    name: Build (Windows)
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '6.0.x'
+
+      - name: Restore
+        run: dotnet restore HydraMenu.sln
+
+      - name: Build (Release)
+        run: dotnet build HydraMenu.sln -c Release --no-restore
+
+      - name: Collect build outputs
+        run: |
+          mkdir -p artifact
+          if [ -f src/bin/Release/net6.0/HydraMenu.dll ]; then cp src/bin/Release/net6.0/HydraMenu.dll artifact/; fi
+          cp -v src/bin/Release/net6.0/*.pdb artifact/ || true
+          cp -v src/bin/Release/net6.0/*.xml artifact/ || true
+          ls -la artifact || true
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Hydra-DLL
+          path: artifact/
