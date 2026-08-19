@@ -29,6 +29,9 @@ namespace HydraMenu.features
         }
 
         // Per-player physics updates: nametags & ghost visibility
+        // NOTE: PlayerPhysics.Update does not exist in this version. Patch disabled.
+        // If you need to hook player physics, use a different method or class.
+        /*
         [HarmonyPatch(typeof(PlayerPhysics), nameof(PlayerPhysics.Update))]
         public static class PlayerPhysicsUpdate
         {
@@ -42,6 +45,7 @@ namespace HydraMenu.features
                 catch { }
             }
         }
+        */
 
         // Meeting nametags when a meeting HUD is created
         [HarmonyPatch(typeof(MeetingHud), "Start")]
