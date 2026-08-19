@@ -1,4 +1,4 @@
-﻿using HydraMenu.features;
+using HydraMenu.features;
 using UnityEngine;
 
 namespace HydraMenu.ui.sections
@@ -20,6 +20,16 @@ namespace HydraMenu.ui.sections
 
 			Visuals.ShowGhosts.Enabled = GUILayout.Toggle(Visuals.ShowGhosts.Enabled, "Show Ghosts");
 			Chat.OnChat.ShowMessagesByGhosts = GUILayout.Toggle(Chat.OnChat.ShowMessagesByGhosts, "Show messages by ghosts");
+
+			// Malum granular toggles
+			GUILayout.Space(6);
+			GUILayout.Label("Malum ESP", GUILayout.ExpandWidth(true));
+			MalumIntegration.FreecamEnabled = GUILayout.Toggle(MalumIntegration.FreecamEnabled, "Malum: Freecam");
+			MalumIntegration.ZoomOutEnabled = GUILayout.Toggle(MalumIntegration.ZoomOutEnabled, "Malum: Zoom Out");
+			MalumIntegration.PlayerNametagsEnabled = GUILayout.Toggle(MalumIntegration.PlayerNametagsEnabled, "Malum: Player Nametags");
+			MalumIntegration.MeetingNametagsEnabled = GUILayout.Toggle(MalumIntegration.MeetingNametagsEnabled, "Malum: Meeting Nametags");
+			MalumIntegration.SeeGhostsEnabled = GUILayout.Toggle(MalumIntegration.SeeGhostsEnabled, "Malum: See Ghosts");
+			MalumIntegration.SporeCloudEnabled = GUILayout.Toggle(MalumIntegration.SporeCloudEnabled, "Malum: Spore Cloud Fix");
 		}
 	}
 }
