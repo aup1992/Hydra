@@ -1,3 +1,5 @@
+using System;
+using System.Reflection;
 using UnityEngine;
 using Sentry.Internal.Extensions;
 
@@ -83,8 +85,44 @@ public static class MalumESP
         {
             foreach (var playerState in meetingHud.playerStates)
             {
-                // Fetch the NetworkedPlayerInfo of each playerState
-                var data = GameData.Instance.GetPlayerById(playerState.TargetPlayerId);
+                // Reflection-safe lookup of a player id from playerState (different AU versions use different names)
+                int targetId = -1;
+                try
+                {
+                    var psType = playerState.GetType();
+
+                    // Try common property names
+                    var prop = psType.GetProperty("TargetPlayerId")
+                               ?? psType.GetProperty("PlayerId")
+                               ?? psType.GetProperty("playerId")
+                               ?? psType.GetProperty("ClientId");
+
+                    if (prop != null)
+                    {
+                        var val = prop.GetValue(playerState);
+                        if (val != null) targetId = Convert.ToInt32(val);
+                    }
+                    else
+                    {
+                        // Try fields
+                        var field = psType.GetField("TargetPlayerId")
+                                 ?? psType.GetField("PlayerId")
+                                 ?? psType.GetField("playerId")
+                                 ?? psType.GetField("ClientId");
+
+                        if (field != null)
+                        {
+                            var val = field.GetValue(playerState);
+                            if (val != null) targetId = Convert.ToInt32(val);
+                        }
+                    }
+                }
+                catch { targetId = -1; }
+
+                if (targetId == -1) continue;
+
+                // Fetch the NetworkedPlayerInfo
+                var data = GameData.Instance.GetPlayerById(targetId);
 
                 if (data.IsNull() || data.Disconnected || data.Outfits[PlayerOutfitType.Default].IsNull()) continue;
 
