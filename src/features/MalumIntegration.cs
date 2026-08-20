@@ -21,8 +21,8 @@ namespace HydraMenu.features
             {
                 try
                 {
-                    if (FreecamEnabled) MalumESP.FreecamCheat();
-                    if (ZoomOutEnabled) MalumESP.ZoomOut(__instance);
+                    // if (FreecamEnabled) MalumESP.FreecamCheat();
+                    // if (ZoomOutEnabled) MalumESP.ZoomOut(__instance);
                 }
                 catch { }
             }
@@ -55,7 +55,7 @@ namespace HydraMenu.features
             {
                 try
                 {
-                    if (MeetingNametagsEnabled) MalumESP.MeetingNametags(__instance);
+                    // if (MeetingNametagsEnabled) MalumESP.MeetingNametags(__instance);
                 }
                 catch { }
             }
