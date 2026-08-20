@@ -122,7 +122,7 @@ public static class MalumESP
                 if (targetId == -1) continue;
 
                 // Fetch the NetworkedPlayerInfo
-                var data = GameData.Instance.GetPlayerById(targetId);
+               var data = GameData.Instance.GetPlayerById((byte)targetId);
 
                 if (data.IsNull() || data.Disconnected || data.Outfits[PlayerOutfitType.Default].IsNull()) continue;
 
