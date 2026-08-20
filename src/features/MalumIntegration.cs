@@ -21,6 +21,14 @@ namespace HydraMenu.features
             {
                 try
                 {
+                    // synchronize settings used by MalumESP
+                    MalumSettings.freecam = FreecamEnabled;
+                    MalumSettings.zoomOut = ZoomOutEnabled;
+                    MalumSettings.noShadows = SporeCloudEnabled;
+                    MalumSettings.seeGhosts = SeeGhostsEnabled;
+                    MalumSettings.seeRoles = PlayerNametagsEnabled;
+                    MalumSettings.seePlayerInfo = PlayerNametagsEnabled;
+
                     if (FreecamEnabled) MalumESP.FreecamCheat();
                     if (ZoomOutEnabled) MalumESP.ZoomOut(__instance);
                 }
@@ -28,24 +36,26 @@ namespace HydraMenu.features
             }
         }
 
-        // Per-player physics updates: nametags & ghost visibility
-        // NOTE: PlayerPhysics.Update does not exist in this version. Patch disabled.
-        // If you need to hook player physics, use a different method or class.
-        /*
-        [HarmonyPatch(typeof(PlayerPhysics), nameof(PlayerPhysics.Update))]
-        public static class PlayerPhysicsUpdate
+        // Per-player updates: nametags & ghost visibility (hook PlayerControl.Update to reach per-player physics)
+        [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.Update))]
+        public static class PlayerControlUpdate
         {
-            static void Postfix(PlayerPhysics __instance)
+            static void Postfix(PlayerControl __instance)
             {
                 try
                 {
-                    if (PlayerNametagsEnabled) MalumESP.PlayerNametags(__instance);
-                    if (SeeGhostsEnabled) MalumESP.SeeGhostsCheat(__instance);
+                    // only run for local player instances
+                    if (__instance == null) return;
+
+                    var phys = __instance.MyPhysics;
+                    if (phys == null) return;
+
+                    if (PlayerNametagsEnabled) MalumESP.PlayerNametags(phys);
+                    if (SeeGhostsEnabled) MalumESP.SeeGhostsCheat(phys);
                 }
                 catch { }
             }
         }
-        */
 
         // Meeting nametags when a meeting HUD is created
         [HarmonyPatch(typeof(MeetingHud), "Start")]
@@ -55,20 +65,13 @@ namespace HydraMenu.features
             {
                 try
                 {
+                    MalumSettings.seeRoles = MeetingNametagsEnabled;
+                    MalumSettings.seePlayerInfo = MeetingNametagsEnabled;
+
                     if (MeetingNametagsEnabled) MalumESP.MeetingNametags(__instance);
                 }
                 catch { }
             }
-        }
-
-        // Optional: apply spore cloud fix when appropriate. This is a bit more invasive because
-        // it requires a Mushroom instance; for now we will attempt to patch Mushroom.Awake if present.
-        [HarmonyPatch]
-        public static class OptionalSporePatch
-        {
-            // Intentionally left blank — Spore/Z-order fix is exposed as a toggle and will be
-            // applied indirectly by the other hooks that run each frame. If you want a dedicated
-            // patch for Mushroom lifecycle, tell me which method to hook and I will add it.
         }
     }
 }
